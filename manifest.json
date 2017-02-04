@@ -1,0 +1,17 @@
+{
+
+  "description": "Show and remove expired bookmarks",
+  "manifest_version": 2,
+  "name": "404 Bookmarks",
+  "version": "1.0",
+
+
+  "permissions": [
+    "bookmarks", "<all_urls>"
+  ],
+
+  "browser_action": {
+    "default_title": "404 Bookmarks",
+    "default_popup": "popup/popup.html"
+  }
+}
