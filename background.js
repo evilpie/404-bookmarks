@@ -14,7 +14,7 @@ function findDead(error, progress) {
             }
 
             // Can't use HEAD request, because a ton of websites return a 405 error.
-            // For example amazon.com
+            // For example amazon.com or medium.com.
             fetch(url).then(response => {
                 if (!response.ok) {
                     error(bookmark, response.status);
