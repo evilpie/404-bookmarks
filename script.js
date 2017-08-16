@@ -7,14 +7,6 @@ function handleDead({bookmark, error}) {
     const li = document.createElement("li")
     li.id = "bookmark-" + bookmark.id;
 
-    const a = document.createElement("a");
-    a.href = bookmark.url;
-    a.textContent = bookmark.title || bookmark.url;
-    a.target = "_blank";
-    li.append(a);
-
-    li.append(` (${error}) `);
-
     const remove = document.createElement("a");
     remove.onclick = (event) => {
         browser.runtime.sendMessage({type: "remove", id: bookmark.id});
@@ -22,9 +14,19 @@ function handleDead({bookmark, error}) {
         event.preventDefault();
     }
     remove.href = "#";
-    remove.class = "remove"
-    remove.textContent = "[Remove]";
+    remove.classList.add("remove");
+    remove.textContent = "remove";
     li.append(remove)
+
+    li.append(" ")
+
+    const a = document.createElement("a");
+    a.href = bookmark.url;
+    a.textContent = bookmark.title || bookmark.url;
+    a.target = "_blank";
+    li.append(a);
+
+    li.append(` (${error})`);
 
     ul.append(li);
 }

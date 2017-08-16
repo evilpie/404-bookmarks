@@ -9,7 +9,7 @@ function findDead(error, progress) {
 
         for (const bookmark of bookmarks) {
             const url = bookmark.url;
-            if (!url || url.startsWith("place:") || url.startsWith("about:")) {
+            if (!url || url.startsWith("place:") || url.startsWith("about:") || url.startsWith("javascript:")) {
                 continue;
             }
 
