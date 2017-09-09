@@ -1,6 +1,9 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
   <title>404 Bookmarks</title>
   <meta charset="utf-8">
   <style>
@@ -24,15 +27,16 @@
     list-style: none;
     padding-left: 0;
   }
-
   </style>
-  </head>
-</html>
+</head>
 <body>
 
 <h1>List of expired bookmarks</h1>
 
-<ul>
+<ul id="404-errors">
+</ul>
+
+<ul id="other-errors">
 </ul>
 
 <div>Found <span id="live"></span> unexpired bookmarks.</div>

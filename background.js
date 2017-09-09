@@ -1,15 +1,21 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 browser.browserAction.onClicked.addListener(() => {
     browser.tabs.create({url: "/index.html"});
 });
 
 
 function findDead(error, progress) {
+    var ignoredScheme = /^(place|about|javascript|data)\:/i;
+
     browser.bookmarks.search({}).then(bookmarks => {
         let found = 0;
 
         for (const bookmark of bookmarks) {
             const url = bookmark.url;
-            if (!url || url.startsWith("place:") || url.startsWith("about:") || url.startsWith("javascript:")) {
+            if (!url || ignoredScheme.test(url)) {
                 continue;
             }
 

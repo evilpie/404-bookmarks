@@ -1,6 +1,8 @@
-function handleDead({bookmark, error}) {
-    const ul = document.querySelector("ul");
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+function handleDead({bookmark, error}) {
     if (document.getElementById("bookmark-" + bookmark.id))
         return;
 
@@ -10,7 +12,7 @@ function handleDead({bookmark, error}) {
     const remove = document.createElement("a");
     remove.onclick = (event) => {
         browser.runtime.sendMessage({type: "remove", id: bookmark.id});
-        ul.removeChild(li);
+        li.remove();
         event.preventDefault();
     }
     remove.href = "#";
@@ -28,6 +30,7 @@ function handleDead({bookmark, error}) {
 
     li.append(` (${error})`);
 
+    const ul = document.getElementById((error === 404) ? "404-errors" : "other-errors");
     ul.append(li);
 }
 
