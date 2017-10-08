@@ -7,30 +7,53 @@ browser.browserAction.onClicked.addListener(() => {
 });
 
 
-function findDead(error, progress) {
-    var ignoredScheme = /^(place|about|javascript|data)\:/i;
+async function findDead(error, progress) {
+    const ignoredScheme = /^(place|about|javascript|data)\:/i;
+
+    let found = 0;
+    let running = 0;
+    function work(queue, error, progress) {
+        if (running > 30) {
+            setTimeout(work, 500, queue, error, progress);
+            return;
+        }
+        if (queue.length == 0) {
+            return;
+        }
+
+        running++;
+        const [url, bookmark] = queue.shift();
+        // Can't use HEAD request, because a ton of websites return a 405 error.
+        // For example amazon.com or medium.com.
+        fetch(url).then(response => {
+            if (!response.ok) {
+                error(bookmark, response.status);
+                return;
+            }
+
+            running--;
+            found++;
+            progress(bookmark.id, found);
+        }).catch(exception => {
+            running--;
+            error(bookmark, exception.toString())
+        });
+
+        work(queue, error, progress);
+    }
 
     browser.bookmarks.search({}).then(bookmarks => {
-        let found = 0;
-
+        let queue = [];
         for (const bookmark of bookmarks) {
             const url = bookmark.url;
             if (!url || ignoredScheme.test(url)) {
                 continue;
             }
 
-            // Can't use HEAD request, because a ton of websites return a 405 error.
-            // For example amazon.com or medium.com.
-            fetch(url).then(response => {
-                if (!response.ok) {
-                    error(bookmark, response.status);
-                    return;
-                }
-
-                found++;
-                progress(bookmark.id, found);
-            }).catch(exception => error(bookmark, exception.toString()))
+            queue.push([url, bookmark]);
         }
+
+        work(queue, error, progress);
     });
 }
 
