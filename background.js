@@ -26,12 +26,13 @@ async function findDead(error, progress) {
         // Can't use HEAD request, because a ton of websites return a 405 error.
         // For example amazon.com or medium.com.
         fetch(url).then(response => {
+            running--;
+
             if (!response.ok) {
                 error(bookmark, response.status);
                 return;
             }
 
-            running--;
             found++;
             progress(bookmark.id, found);
         }).catch(exception => {
