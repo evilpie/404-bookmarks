@@ -9,16 +9,9 @@ function handleDead({bookmark, error}) {
     const li = document.createElement("li")
     li.id = "bookmark-" + bookmark.id;
 
-    const remove = document.createElement("a");
-    remove.onclick = (event) => {
-        browser.runtime.sendMessage({type: "remove", id: bookmark.id});
-        li.remove();
-        event.preventDefault();
-    }
-    remove.href = "#";
-    remove.classList.add("remove");
-    remove.textContent = "remove";
-    li.append(remove)
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    li.append(input)
 
     li.append(" ")
 
@@ -54,3 +47,47 @@ function onMessage(message) {
 
 browser.runtime.onMessage.addListener(onMessage);
 browser.runtime.sendMessage({type: "find_dead"});
+
+function update(name) {
+    const ctr = document.getElementById(name);
+
+    const selected = ctr.querySelectorAll("input:checked").length;
+    const removal = ctr.querySelector("a.remove");
+    if (selected === 0) {
+        removal.classList.add("disabled");
+        removal.textContent = "Select bookmarks to remove";
+    } else if (selected === 1) {
+        removal.classList.remove("disabled");
+        removal.textContent = "Remove 1 bookmark";
+    } else {
+        removal.classList.remove("disabled");
+        removal.textContent = `Remove ${selected} bookmarks`;
+    }
+}
+
+document.body.addEventListener("click", function(event) {
+    const t = event.target;
+    if (t.classList.contains("select-all")) {
+        for (let input of t.parentNode.querySelectorAll("input")) {
+            input.checked = true;
+        }
+        event.preventDefault();
+    } else if (t.classList.contains("remove")) {
+        const toRemove = t.parentNode.querySelectorAll("li > input:checked");
+        if (toRemove.length >= 5) {
+            if (!confirm(`Are you sure you want to remove ${toRemove.length} bookmarks? This operation cannot be undone.`))
+                return;
+        }
+
+        for (let node of toRemove) {
+            node = node.parentNode; // Selected input, but want li.
+            browser.runtime.sendMessage({type: "remove", id: node.id.replace("bookmark-", "")});
+            node.remove();
+        }
+        event.preventDefault();
+    }
+
+    update("404-errors-ctr");
+    update("other-errors-ctr");
+});
+

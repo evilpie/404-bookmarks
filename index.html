@@ -7,6 +7,10 @@
   <title>404 Bookmarks</title>
   <meta charset="utf-8">
   <style>
+  * {
+    font-family: sans-serif;
+  }
+
   a.remove {
     text-decoration: none;
     background-color: #44c767;
@@ -23,23 +27,60 @@
     border-color: #581a28;
   }
 
+  a.remove.disabled, a.remove.disabled:hover {
+    background-color: gray;
+    color: #ffffff;
+    border: 1px solid black;
+    pointer-events: none;
+  }
+
+  a.select-all {
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+  }
+
   ul {
     list-style: none;
     padding-left: 0;
+    margin-top: 0em;
+  }
+
+  h1 {
+    margin-bottom: 0.2em;
+  }
+
+  input {
+    outline: none;
+  }
+
+  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+
+  #unexpired {
+    padding-top: 2em;
+    color: gray;
   }
   </style>
 </head>
 <body>
 
-<h1>List of expired bookmarks</h1>
+<div id="404-errors-ctr">
+<h1>Expired bookmarks</h1>
+<ul id="404-errors"></ul>
+<a href="#" class="remove disabled">Select bookmarks to remove</a> <a href="#" class="select-all">Select all</a>
+</div>
 
-<ul id="404-errors">
-</ul>
+<div id="other-errors-ctr">
+<h1>Other bookmarks</h1>
+<p>These bookmarks <em>might not be expired</em>, but some other error occurred while looking up the page.</p>
+<ul id="other-errors"></ul>
+<a href="#" class="remove disabled">Select bookmarks to remove</a> <a href="#" class="select-all">Select all</a>
+</div>
 
-<ul id="other-errors">
-</ul>
-
-<div>Found <span id="live"></span> unexpired bookmarks.</div>
+<div id="unexpired">Found <span id="live"></span> unexpired bookmarks.</div>
 
 <script src="script.js"></script>
 </body>
