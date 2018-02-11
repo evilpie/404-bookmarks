@@ -6,7 +6,6 @@ browser.browserAction.onClicked.addListener(() => {
     browser.tabs.create({url: "/index.html"});
 });
 
-
 async function findDead(error, progress) {
     const ignoredScheme = /^(place|about|javascript|data)\:/i;
 
@@ -22,10 +21,10 @@ async function findDead(error, progress) {
         }
 
         running++;
-        const [url, bookmark] = queue.shift();
+        const bookmark = queue.shift();
         // Can't use HEAD request, because a ton of websites return a 405 error.
         // For example amazon.com or medium.com.
-        fetch(url).then(response => {
+        fetch(bookmark.url).then(response => {
             running--;
 
             if (!response.ok) {
@@ -51,7 +50,7 @@ async function findDead(error, progress) {
                 continue;
             }
 
-            queue.push([url, bookmark]);
+            queue.push(bookmark);
         }
 
         work(queue, error, progress);
