@@ -2,6 +2,29 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+// about:config "extensions.webextensions.restrictedDomains"
+const RESTRICTED_DOMAINS = [
+    "accounts-static.cdn.mozilla.net",
+    "accounts.firefox.com",
+    "addons.cdn.mozilla.net",
+    "addons.mozilla.org",
+    "api.accounts.firefox.com",
+    "content.cdn.mozilla.net",
+    "content.cdn.mozilla.net",
+    "discovery.addons.mozilla.org",
+    "input.mozilla.org",
+    "install.mozilla.org",
+    "oauth.accounts.firefox.com",
+    "profile.accounts.firefox.com",
+    "support.mozilla.org",
+    "sync.services.mozilla.com",
+    "testpilot.firefox.com",
+
+    // I see these failures as well
+    "marketplace.firefox.com",
+    "www.mozilla.org",
+];
+
 function handleDead({bookmark, error}) {
     if (document.getElementById("bookmark-" + bookmark.id))
         return;
@@ -20,6 +43,18 @@ function handleDead({bookmark, error}) {
     a.textContent = bookmark.title || bookmark.url;
     a.target = "_blank";
     li.append(a);
+
+    if (error == "TypeError: NetworkError when attempting to fetch resource.") {
+        error = "NetworkError";
+
+        // Ignore NetworkErrors for domains on the restricted list that
+        // WebExtensions can't access.
+        try {
+            const url = new URL(bookmark.url);
+            if (RESTRICTED_DOMAINS.includes(url.hostname))
+                return;
+        } catch (e) {}
+    }
 
     li.append(` (${error})`);
 
