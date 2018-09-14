@@ -37,6 +37,10 @@ ul {
   margin-top: 0em;
 }
 
+li.maybe-404 {
+  background-color: rgba(206, 206, 206, 0.6);
+}
+
 h1 {
   margin-bottom: 0.2em;
 }

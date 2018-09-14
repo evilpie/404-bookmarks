@@ -6,9 +6,10 @@ browser.browserAction.onClicked.addListener(() => {
     browser.tabs.create({url: "/index.html"});
 });
 
-async function findDead(error, progress) {
-    const ignoredScheme = /^(place|about|javascript|data)\:/i;
+const IGNORED_SCHEME = /^(place|about|javascript|data)\:/i;
+const NOT_FOUND_404 = /\b404\b|(page not found)|(file not found)|(site not found)/i;
 
+async function findDead(error, progress) {
     let found = 0;
     let running = 0;
     function work(queue, error, progress) {
@@ -26,6 +27,21 @@ async function findDead(error, progress) {
         // For example amazon.com or medium.com.
         fetch(bookmark.url).then(response => {
             running--;
+
+            if (response.status == 404) {
+                // Verify 404 response text
+                return response.text().then(text => {
+                    // Apparently it's quite common to find server returning
+                    // 404 errors for _existing_ pages.
+
+                    if (NOT_FOUND_404.test(text)) {
+                        // Response text contains 404 or "not found".
+                        error(bookmark, response.status)
+                    } else {
+                        error(bookmark, -404);
+                    }
+                });
+            }
 
             if (!response.ok) {
                 error(bookmark, response.status);
@@ -46,7 +62,7 @@ async function findDead(error, progress) {
         let queue = [];
         for (const bookmark of bookmarks) {
             const url = bookmark.url;
-            if (!url || ignoredScheme.test(url)) {
+            if (!url || IGNORED_SCHEME.test(url)) {
                 continue;
             }
 

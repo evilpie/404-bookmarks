@@ -56,10 +56,30 @@ function handleDead({bookmark, error}) {
         } catch (e) {}
     }
 
+    let maybe404 = false;
+    if (error === -404) {
+        li.classList.add("maybe-404");
+
+        maybe404 = true;
+        error = "potentially working 404";
+    }
+
     li.append(` (${error})`);
 
-    const ul = document.getElementById((error === 404) ? "404-errors" : "other-errors");
-    ul.append(li);
+    if (maybe404) {
+        // Add to end of 404 list
+        document.getElementById("404-errors").append(li);
+    } else if (error == 404) {
+        let el = document.querySelector(".maybe-404");
+        if (el) {
+            // Add before the list of "maybe 404"
+            el.parentNode.insertBefore(li, el);
+        } else {
+            document.getElementById("404-errors").append(li)
+        }
+    } else {
+        document.getElementById("other-errors").append(li)
+    }
 }
 
 function handleAlive({id, found}) {
