@@ -20,5 +20,11 @@
   "browser_action": {
     "default_title": "404 Bookmarks",
     "default_icon": "icon.svg"
+  },
+  
+  "applications": {
+    "gecko": {
+      "id": "{5f8d31ba-47fb-4b70-bf8d-d2113f6da22f}"
+    }
   }
 }
